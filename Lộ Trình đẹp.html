@@ -1,0 +1,627 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>Định Hướng Kiếm Tiền • Tự Do Tài Chính & Trị Liệu</title>
+  <!-- Tailwind CSS CDN + Google Fonts Inter -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #f8fafc;
+      scroll-behavior: smooth;
+    }
+    /* Glassmorphism nâng cao */
+    .glass {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+    .glass-dark {
+      background: rgba(22, 101, 52, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+    /* Card hover nâng cao */
+    .card-hover {
+      transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .card-hover:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 25px 30px -10px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    /* Progress ring animation */
+    .progress-fill {
+      transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    /* Toast notification */
+    .toast {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      background: #14532d;
+      color: white;
+      padding: 14px 28px;
+      border-radius: 9999px;
+      font-weight: 500;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+      z-index: 200;
+      opacity: 0;
+      transform: translateY(20px) scale(0.95);
+      pointer-events: none;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+      backdrop-filter: blur(8px);
+      background: rgba(22, 101, 52, 0.9);
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+    /* Accordion */
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+    }
+    .accordion-content.open {
+      max-height: 2500px;
+    }
+    .accordion-icon {
+      transition: transform 0.35s ease;
+    }
+    .accordion-btn[aria-expanded="true"] .accordion-icon {
+      transform: rotate(180deg);
+    }
+    /* Scroll reveal animation */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    /* Task item animation */
+    .task-item {
+      animation: taskIn 0.4s ease;
+    }
+    @keyframes taskIn {
+      0% { opacity: 0; transform: translateX(-10px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+    /* Header scroll effect */
+    .header-scrolled {
+      background: rgba(255, 255, 255, 0.9) !important;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+    /* Wave divider */
+    .wave-divider {
+      position: relative;
+      height: 80px;
+      overflow: hidden;
+    }
+    .wave-divider svg {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 80px;
+    }
+    /* Checkbox custom */
+    input[type="checkbox"]:checked + label {
+      text-decoration: line-through;
+      color: #6b7280;
+    }
+    /* Gradient text */
+    .gradient-text {
+      background: linear-gradient(135deg, #166534, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    /* Scrollbar */
+    ::-webkit-scrollbar{width:8px}
+    ::-webkit-scrollbar-track{background:#f1f5f9; border-radius:12px}
+    ::-webkit-scrollbar-thumb{background:linear-gradient(#166534, #14532d); border-radius:12px}
+  </style>
+</head>
+<body class="antialiased text-gray-800">
+
+  <!-- Sticky Header với hiệu ứng scroll -->
+  <header id="mainHeader" class="sticky top-0 z-50 glass transition-all duration-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-2 sm:gap-3">
+        <svg class="w-8 h-8 sm:w-9 sm:h-9 text-emerald-800 drop-shadow-sm" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1z" />
+        </svg>
+        <span class="text-base sm:text-lg md:text-xl font-bold text-emerald-900 tracking-tight leading-tight">
+          ĐỊNH HƯỚNG SỰ NGHIỆP <span class="hidden sm:inline text-amber-600">•</span><br class="sm:hidden"> <span class="text-amber-700 font-semibold">Tự Do Tài Chính & Trị Liệu</span>
+        </span>
+      </div>
+      <nav class="hidden md:flex items-center gap-5 text-sm font-semibold text-emerald-800">
+        <a href="#skills" class="hover:text-amber-600 transition-colors duration-200">Kỹ năng</a>
+        <a href="#models" class="hover:text-amber-600 transition-colors duration-200">Mô hình</a>
+        <a href="#roadmap" class="hover:text-amber-600 transition-colors duration-200">Lộ trình</a>
+        <a href="#todo" class="hover:text-amber-600 transition-colors duration-200">Hành động</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section với ảnh nền và hiệu ứng -->
+  <section class="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-amber-50/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-14 lg:py-20 grid md:grid-cols-2 gap-10 items-center">
+      <!-- Cột trái -->
+      <div class="space-y-7 reveal">
+        <span class="inline-block bg-amber-100/80 backdrop-blur-sm text-amber-800 text-sm font-semibold px-4 py-1.5 rounded-full shadow-sm">Mục Tiêu Sự Nghiệp:</span>
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-emerald-900 leading-tight tracking-tight">
+          🏡 Nhà + Đất +<br> <span class="text-amber-600">Thu Nhập Thụ Động</span>
+        </h1>
+        <div class="glass rounded-2xl p-6 shadow-lg border border-white/50">
+          <p class="text-gray-700 italic text-lg font-medium leading-relaxed">“Chỉ có thu nhập thụ động mới giải phóng được thời gian cho mình”</p>
+          <p class="text-gray-600 mt-1">“Đóng gói kiến thức là đường thẳng nhanh nhất.”</p>
+        </div>
+        <div class="flex items-center gap-3 bg-amber-50/80 backdrop-blur-sm rounded-xl px-4 py-3 border border-amber-200 shadow-sm">
+          <svg class="w-6 h-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+          </svg>
+          <span class="text-emerald-900 font-semibold text-lg">Hướng đi then chốt: <span class="text-amber-700">Video Marketing</span></span>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <div class="glass rounded-xl px-4 py-2 shadow-sm flex items-center gap-2"><span>🏡</span> Nhà Đất</div>
+          <div class="glass rounded-xl px-4 py-2 shadow-sm flex items-center gap-2"><span>🕘</span> Thời gian</div>
+          <div class="glass rounded-xl px-4 py-2 shadow-sm flex items-center gap-2"><span>💰</span> Thụ Động</div>
+        </div>
+      </div>
+      <!-- Cột phải hình ảnh -->
+      <div class="relative rounded-3xl overflow-hidden shadow-2xl reveal group" style="animation-delay: 0.2s;">
+        <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&auto=format&fit=crop" alt="Nhà giữa rừng xanh" class="w-full h-80 md:h-96 object-cover transition duration-700 group-hover:scale-110">
+        <div class="absolute bottom-4 left-4 glass rounded-xl px-5 py-2 text-emerald-900 font-semibold text-sm shadow-lg backdrop-blur-lg">
+          🌿 Nhà Tâm Linh
+        </div>
+      </div>
+    </div>
+    <!-- Wave divider dưới hero -->
+    <div class="wave-divider">
+      <svg viewBox="0 0 1440 80" preserveAspectRatio="none" class="text-white fill-current">
+        <path d="M0,48 C360,80 1080,0 1440,48 L1440,80 L0,80 Z" />
+      </svg>
+    </div>
+  </section>
+
+  <!-- Section 1: Kỹ Năng – Bằng Cấp -->
+  <section id="skills" class="max-w-7xl mx-auto px-4 sm:px-6 py-16 lg:py-20">
+    <div class="text-center reveal mb-12">
+      <h2 class="text-4xl sm:text-5xl font-bold text-emerald-900">🌱 Kỹ Năng – Bằng Cấp Cần Học</h2>
+      <p class="text-gray-600 mt-3 max-w-2xl mx-auto">Nền tảng vững chắc cho sự nghiệp trị liệu chuyên nghiệp</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-8">
+      <!-- Card 1 -->
+      <div class="glass rounded-3xl p-6 shadow-lg card-hover reveal flex flex-col" style="animation-delay: 0.1s;">
+        <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
+          <svg class="w-8 h-8 text-emerald-800" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+        </div>
+        <h3 class="text-2xl font-bold text-emerald-900 mb-2">Massage Trị Liệu</h3>
+        <p class="text-gray-600 flex-1">Kinh lạc + Huyệt đạo + Giải phẫu Tây y</p>
+        <div class="mt-5 flex flex-wrap gap-2 text-xs font-semibold">
+          <span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full">Khách đau mỏi</span>
+          <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full">Người lớn tuổi</span>
+        </div>
+      </div>
+      <!-- Card 2 -->
+      <div class="glass rounded-3xl p-6 shadow-lg card-hover reveal flex flex-col" style="animation-delay: 0.2s;">
+        <div class="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
+          <svg class="w-8 h-8 text-amber-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        </div>
+        <h3 class="text-2xl font-bold text-emerald-900 mb-2">Trigger Point</h3>
+        <p class="text-gray-600 flex-1">Giải tỏa nút thắt đau cơ, điểm kích thích theo Giải phẫu Tây Y</p>
+        <div class="mt-5 flex flex-wrap gap-2 text-xs font-semibold">
+          <span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full">Đau mạn tính</span>
+          <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full">Dân văn phòng</span>
+        </div>
+      </div>
+      <!-- Card 3 -->
+      <div class="glass rounded-3xl p-6 shadow-lg card-hover reveal flex flex-col" style="animation-delay: 0.3s;">
+        <div class="w-16 h-16 bg-emerald-200 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
+          <svg class="w-8 h-8 text-emerald-900" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+        </div>
+        <h3 class="text-2xl font-bold text-emerald-900 mb-2">Yoga Trị Liệu</h3>
+        <p class="text-gray-600 flex-1">Căng cơ, kích thích, Giải phẫu tư thế Yoga</p>
+        <div class="mt-5 flex flex-wrap gap-2 text-xs font-semibold">
+          <span class="bg-amber-100 text-amber-800 px-3 py-1 rounded-full">Phục hồi</span>
+          <span class="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full">Người tập yoga</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 2: Mô Hình Kiếm Tiền -->
+  <section id="models" class="max-w-7xl mx-auto px-4 sm:px-6 py-16 lg:py-20">
+    <div class="text-center reveal mb-12">
+      <h2 class="text-4xl sm:text-5xl font-bold text-emerald-900">💎 Mô Hình Kiếm Tiền</h2>
+      <p class="text-gray-600 mt-3 max-w-2xl mx-auto">Ba hướng đi cốt lõi để xây dựng sự nghiệp bền vững</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-8">
+      <!-- Mô hình 1 -->
+      <div class="glass rounded-3xl p-6 shadow-xl card-hover reveal flex flex-col border-t-4 border-emerald-600">
+        <h3 class="text-2xl font-bold text-emerald-800 mb-3">🏢 Mở Spa Massage Trị Liệu</h3>
+        <p class="text-gray-700 mb-5">Tạo dòng tiền hàng ngày ổn định từ dịch vụ trực tiếp.</p>
+        <div class="mt-auto space-y-3 text-sm border-t pt-4 border-emerald-100">
+          <div class="flex justify-between"><span class="text-gray-500">Đầu tư ban đầu</span> <span class="font-semibold">30-60 triệu</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Khách hàng</span> <span class="font-semibold">Địa phương, vãng lai</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Tự động hóa</span> <span class="text-amber-600 font-medium">Thấp</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Dòng tiền</span> <span class="font-semibold">Hàng ngày</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Biên lợi nhuận</span> <span class="text-emerald-700 font-bold">25-40%</span></div>
+        </div>
+      </div>
+      <!-- Mô hình 2 -->
+      <div class="glass rounded-3xl p-6 shadow-xl card-hover reveal flex flex-col border-t-4 border-amber-500">
+        <h3 class="text-2xl font-bold text-emerald-800 mb-3">🎥 Dạy Trên Youtube</h3>
+        <p class="text-gray-700 mb-5">Học theo mô hình Đặng Kim Ba, xây tệp khán giả không giới hạn.</p>
+        <div class="mt-auto space-y-3 text-sm border-t pt-4 border-amber-100">
+          <div class="flex justify-between"><span class="text-gray-500">Đầu tư ban đầu</span> <span class="font-semibold">5-10 triệu</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Khách hàng</span> <span class="font-semibold">Toàn cầu</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Tự động hóa</span> <span class="text-amber-600 font-medium">Cao (sau khi có video)</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Dòng tiền</span> <span class="font-semibold">Hàng tháng (ads, members)</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Biên lợi nhuận</span> <span class="text-emerald-700 font-bold">60-80%</span></div>
+        </div>
+      </div>
+      <!-- Mô hình 3 -->
+      <div class="glass rounded-3xl p-6 shadow-xl card-hover reveal flex flex-col border-t-4 border-emerald-600">
+        <h3 class="text-2xl font-bold text-emerald-800 mb-3">📚 Đào Tạo Online/Offline</h3>
+        <p class="text-gray-700 mb-5">Đóng gói tri thức thành khóa học tự động bán giá trị cao.</p>
+        <div class="mt-auto space-y-3 text-sm border-t pt-4 border-emerald-100">
+          <div class="flex justify-between"><span class="text-gray-500">Đầu tư ban đầu</span> <span class="font-semibold">10-20 triệu</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Khách hàng</span> <span class="font-semibold">Học viên toàn quốc</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Tự động hóa</span> <span class="text-amber-600 font-medium">Rất cao</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Dòng tiền</span> <span class="font-semibold">Định kỳ / khóa</span></div>
+          <div class="flex justify-between"><span class="text-gray-500">Biên lợi nhuận</span> <span class="text-emerald-700 font-bold">70-90%</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Lộ Trình Hoàn Chỉnh (Accordion tương tác) -->
+  <section id="roadmap" class="max-w-7xl mx-auto px-4 sm:px-6 py-16 lg:py-20">
+    <div class="text-center reveal mb-12">
+      <h2 class="text-4xl sm:text-5xl font-bold text-emerald-900">🗺️ Lộ Trình Từ 0 Đồng Tới Tự Do Tài Chính</h2>
+      <p class="text-gray-600 mt-3 max-w-3xl mx-auto">Chìa khóa: “Kiên Trì Từng Bước” – kiếm tiền sớm, nâng cấp kỹ năng, đa dạng hóa mô hình, xây hệ thống thu nhập thụ động.</p>
+    </div>
+    <div class="space-y-6 max-w-5xl mx-auto">
+      <!-- Giai đoạn 0 -->
+      <div class="glass rounded-2xl shadow-lg border border-white/50 overflow-hidden reveal">
+        <button class="accordion-btn w-full flex justify-between items-center p-5 text-left font-bold text-xl text-emerald-900 bg-emerald-50/40 hover:bg-emerald-50/70 transition-colors" aria-expanded="false" onclick="toggleAccordion(this)">
+          <span>🌱 GIAI ĐOẠN 0: NỀN TẢNG VÀ SINH TỒN (Tháng 1 – 3)</span>
+          <svg class="accordion-icon w-6 h-6 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+        </button>
+        <div class="accordion-content px-5 text-gray-700">
+          <div class="pb-5 space-y-3 pt-1">
+            <p><strong>Mục tiêu:</strong> Thu nhập 8–12 triệu/tháng, tích lũy vốn, chứng chỉ massage hợp lệ.</p>
+            <ul class="list-disc pl-5 space-y-2">
+              <li>✅ Xác nhận chứng chỉ massage Bộ LĐTBXH, nếu thiếu thì học lại (3-5 triệu).</li>
+              <li>✅ Xin việc spa/khách sạn, lương 7-10tr + tip, thực hành vài trăm ca.</li>
+              <li>✅ Nhận khách freelance cuối tuần tại nhà (200-350k/buổi).</li>
+              <li>✅ Kiểm soát chi tiêu, để dành 30-50% thu nhập, tiết kiệm ≥10tr sau 3 tháng.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- Giai đoạn 1 -->
+      <div class="glass rounded-2xl shadow-lg border border-white/50 overflow-hidden reveal">
+        <button class="accordion-btn w-full flex justify-between items-center p-5 text-left font-bold text-xl text-emerald-900 bg-emerald-50/40 hover:bg-emerald-50/70 transition-colors" aria-expanded="false" onclick="toggleAccordion(this)">
+          <span>🚀 GIAI ĐOẠN 1: CHUYÊN SÂU VÀ ĐỊNH VỊ (Tháng 4 – 12)</span>
+          <svg class="accordion-icon w-6 h-6 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+        </button>
+        <div class="accordion-content px-5 text-gray-700">
+          <div class="pb-5 space-y-3 pt-1">
+            <p><strong>Mục tiêu:</strong> Thu nhập 15-20 triệu/tháng, định vị chuyên viên trị liệu khác biệt.</p>
+            <ul class="list-disc pl-5 space-y-2">
+              <li>🎓 Học khóa Trigger Point (5-15 triệu), tăng giá trị buổi trị liệu 50-80%.</li>
+              <li>💼 Chuyển dần sang freelance, gói liệu trình 5-10 buổi (500-800k/buổi).</li>
+              <li>🧘 Bắt đầu học Yoga trị liệu ngắn hạn, đăng ký RYT-200 (15-30 triệu).</li>
+              <li>📱 Xây kênh TikTok, YouTube, Facebook chia sẻ kiến thức, mục tiêu 2k-5k follow.</li>
+              <li>👥 Dạy yoga nhóm nhỏ 5-8 người, giá 150-250k/buổi.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- Giai đoạn 2 -->
+      <div class="glass rounded-2xl shadow-lg border border-white/50 overflow-hidden reveal">
+        <button class="accordion-btn w-full flex justify-between items-center p-5 text-left font-bold text-xl text-emerald-900 bg-emerald-50/40 hover:bg-emerald-50/70 transition-colors" aria-expanded="false" onclick="toggleAccordion(this)">
+          <span>📈 GIAI ĐOẠN 2: ĐA DẠNG NGUỒN THU (Năm thứ 2)</span>
+          <svg class="accordion-icon w-6 h-6 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+        </button>
+        <div class="accordion-content px-5 text-gray-700">
+          <div class="pb-5 space-y-3 pt-1">
+            <p><strong>Mục tiêu:</strong> 25-35 triệu/tháng, thu nhập thụ động đầu tiên.</p>
+            <ul class="list-disc pl-5 space-y-2">
+              <li>🏠 Mở home studio hợp pháp (30-60tr), 4-6 ca/ngày, giá 400-800k/ca.</li>
+              <li>📦 Bán liệu trình combo 10 buổi (4-5 triệu), khách trả trước.</li>
+              <li>🎥 Tạo khóa online đầu tiên (299-499k), bán trên Unica, Kyna.</li>
+              <li>👥 Tuyển cộng sự, đào tạo lại, nhận 20-30% hoa hồng.</li>
+              <li>🏢 Ký hợp đồng B2B chăm sóc sức khỏe doanh nghiệp (3-8tr/tháng/công ty).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- Giai đoạn 3 -->
+      <div class="glass rounded-2xl shadow-lg border border-white/50 overflow-hidden reveal">
+        <button class="accordion-btn w-full flex justify-between items-center p-5 text-left font-bold text-xl text-emerald-900 bg-emerald-50/40 hover:bg-emerald-50/70 transition-colors" aria-expanded="false" onclick="toggleAccordion(this)">
+          <span>🏭 GIAI ĐOẠN 3: NHÂN BẢN VÀ TỰ ĐỘNG HÓA (Năm thứ 3)</span>
+          <svg class="accordion-icon w-6 h-6 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+        </button>
+        <div class="accordion-content px-5 text-gray-700">
+          <div class="pb-5 space-y-3 pt-1">
+            <p><strong>Mục tiêu:</strong> 40-60 triệu/tháng, thụ động ≥10-15 triệu.</p>
+            <ul class="list-disc pl-5 space-y-2">
+              <li>🏬 Mở studio nhỏ chuyên nghiệp, thuê mặt bằng, tuyển 2-3 kỹ thuật viên.</li>
+              <li>👨‍🏫 Tổ chức mentorship 3-6 tháng, học phí 15-30tr/học viên.</li>
+              <li>💎 Xây dựng membership trả phí (199-499k/tháng), mục tiêu 100 thành viên.</li>
+              <li>🛍️ Kinh doanh dụng cụ trị liệu, affiliate marketing.</li>
+              <li>📜 Nâng cấp chứng chỉ quốc tế NASM-CPT, RYT-500.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!-- Giai đoạn 4 -->
+      <div class="glass rounded-2xl shadow-lg border border-amber-100 overflow-hidden reveal">
+        <button class="accordion-btn w-full flex justify-between items-center p-5 text-left font-bold text-xl text-emerald-900 bg-amber-50/40 hover:bg-amber-50/70 transition-colors" aria-expanded="false" onclick="toggleAccordion(this)">
+          <span>🏆 GIAI ĐOẠN 4: CÁN MỐC TỰ DO TÀI CHÍNH (Năm thứ 4+)</span>
+          <svg class="accordion-icon w-6 h-6 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" /></svg>
+        </button>
+        <div class="accordion-content px-5 text-gray-700">
+          <div class="pb-5 space-y-3 pt-1">
+            <p><strong>Mục tiêu:</strong> 20 triệu thụ động/tháng, tự do tài chính.</p>
+            <ul class="list-disc pl-5 space-y-2">
+              <li>📹 Khóa học online bán tự động: ~7 triệu/tháng.</li>
+              <li>👥 Membership: ~5 triệu/tháng.</li>
+              <li>🏢 Lợi nhuận studio: ~5 triệu/tháng.</li>
+              <li>🤝 Hợp đồng B2B tự động: ~3 triệu/tháng.</li>
+              <li>💡 Tổng thụ động dễ dàng 20tr+, vẫn giữ 1-2 ca VIP vì đam mê.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Lời khuyên -->
+    <div class="mt-14 glass rounded-3xl p-6 shadow-xl border border-amber-200 reveal bg-amber-50/70">
+      <h3 class="text-2xl font-bold text-amber-800 mb-4">🌟 Lời Khuyên Sống Còn</h3>
+      <ol class="list-decimal pl-5 space-y-2 text-gray-700">
+        <li><strong>Không vay nợ mở spa trong 2 năm đầu.</strong> Vốn từ tích lũy dịch vụ 1:1.</li>
+        <li><strong>Chứng chỉ pháp lý trước, marketing sau.</strong> Bằng cấp rõ ràng để định giá cao.</li>
+        <li><strong>Tận dụng sức mạnh miễn phí của mạng xã hội.</strong> Mỗi video là nhân viên marketing 24/7.</li>
+        <li><strong>Giữ gìn sức khỏe bản thân.</strong> Yoga là bảo hiểm thân thể cho nghề dài hạn.</li>
+        <li><strong>Đạo đức nghề nghiệp là tài sản quý nhất.</strong> Uy tín xây bằng năm tháng, sụp đổ trong phút sai lầm.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Section 4: Bản Đồ Hành Động (To-Do List tương tác) -->
+  <section id="todo" class="max-w-7xl mx-auto px-4 sm:px-6 py-16 lg:py-20">
+    <div class="glass rounded-3xl shadow-2xl border border-emerald-100 p-6 sm:p-8 reveal">
+      <h2 class="text-3xl sm:text-4xl font-bold text-emerald-900 mb-6 flex items-center gap-3">✅ Bản Đồ Hành Động</h2>
+      <!-- Thanh tiến trình -->
+      <div class="mb-8">
+        <div class="flex justify-between text-sm font-semibold text-emerald-800 mb-2">
+          <span>Tiến độ hoàn thành</span>
+          <span id="progressPercent" class="text-lg">0%</span>
+        </div>
+        <div class="w-full bg-emerald-100 rounded-full h-5 overflow-hidden shadow-inner">
+          <div id="progressBar" class="progress-fill bg-gradient-to-r from-emerald-600 to-amber-500 h-full rounded-full shadow" style="width: 0%"></div>
+        </div>
+      </div>
+      <!-- input thêm việc -->
+      <div class="flex gap-3 mb-8">
+        <input type="text" id="newTaskInput" placeholder="Thêm công việc mới..." class="flex-1 border border-emerald-200 rounded-xl px-5 py-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent bg-white/80 backdrop-blur-sm shadow-sm" autocomplete="off">
+        <button id="addTaskBtn" class="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold px-6 py-3 rounded-xl transition-all shadow-md hover:shadow-lg active:scale-95">Thêm</button>
+      </div>
+      <!-- Danh sách công việc -->
+      <ul id="taskList" class="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+        <!-- render bằng js -->
+      </ul>
+      <div class="mt-5 text-sm text-gray-500 italic flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        Click vào checkbox để đánh dấu hoàn thành, icon thùng rác để xóa.
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-r from-emerald-900 to-emerald-800 text-white py-12 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center">
+      <p class="text-3xl font-bold text-amber-400 mb-2 drop-shadow-md">“Mau chóng về Nhà, không kịp rồi!”</p>
+      <p class="text-emerald-200 text-sm mt-3">© 2025 Định Hướng Sự Nghiệp · Tự Do Tài Chính & Trị Liệu. All rights reserved.</p>
+      <p class="text-emerald-300 text-xs mt-2 opacity-80">Thiết kế bởi Định Hướng Kiếm Tiền</p>
+    </div>
+  </footer>
+
+  <!-- Toast notification custom -->
+  <div id="toast" class="toast"></div>
+
+  <script>
+    (function() {
+      // Toast function
+      const toast = document.getElementById('toast');
+      function showToast(message, duration = 2800) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(toast.hideTimeout);
+        toast.hideTimeout = setTimeout(() => {
+          toast.classList.remove('show');
+        }, duration);
+      }
+
+      // Accordion toggle
+      window.toggleAccordion = function(btn) {
+        const content = btn.nextElementSibling;
+        const isOpen = content.classList.contains('open');
+        if (isOpen) {
+          content.classList.remove('open');
+          btn.setAttribute('aria-expanded', 'false');
+        } else {
+          content.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      };
+
+      // ---------- Scroll Reveal Animation ----------
+      const revealElements = document.querySelectorAll('.reveal');
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            revealObserver.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -50px 0px' });
+      revealElements.forEach(el => revealObserver.observe(el));
+
+      // Header scroll effect
+      const header = document.getElementById('mainHeader');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 20) {
+          header.classList.add('header-scrolled');
+        } else {
+          header.classList.remove('header-scrolled');
+        }
+      });
+
+      // ---------- To-Do List Logic ----------
+      const defaultTasks = [
+        { id: crypto.randomUUID(), text: 'Hoàn thành chứng chỉ Massage bấm huyệt (Đại học Y dược)', done: false },
+        { id: crypto.randomUUID(), text: 'Hoàn thành chứng chỉ Trigger Point Quốc Tế', done: false },
+        { id: crypto.randomUUID(), text: 'Hoàn thành chứng chỉ HLV Yoga', done: false },
+        { id: crypto.randomUUID(), text: 'Mua mic thu âm chuyên nghiệp', done: false },
+        { id: crypto.randomUUID(), text: 'Xây dựng kênh Youtube', done: false },
+        { id: crypto.randomUUID(), text: 'Quay video đầu tiên', done: false },
+        { id: crypto.randomUUID(), text: 'Lên lộ trình xây kênh', done: false },
+        { id: crypto.randomUUID(), text: 'Lên kế hoạch khóa dạy Massage Trị Liệu', done: false },
+        { id: crypto.randomUUID(), text: 'Lên kế hoạch khóa dạy Yoga Trị Liệu', done: false },
+        { id: crypto.randomUUID(), text: 'Lên kế hoạch khóa dạy giải cơ chuyên sâu Trigger Point', done: false },
+        { id: crypto.randomUUID(), text: 'Học chuyên sâu Giải Phẫu Cơ', done: false },
+        { id: crypto.randomUUID(), text: 'Học chuyên sâu Giải Phẫu Kinh lạc', done: false },
+        { id: crypto.randomUUID(), text: 'Học chuyên sâu giải Phẫu Xương', done: false },
+        { id: crypto.randomUUID(), text: 'Học chuyên sâu giải Phẫu Mạc Cơ', done: false },
+        { id: crypto.randomUUID(), text: 'Học kỹ sách khóa XBBH K03', done: false }
+      ];
+
+      let tasks = [];
+      const stored = localStorage.getItem('careerTodoTasks_v2');
+      if (stored) {
+        try {
+          tasks = JSON.parse(stored);
+        } catch(e) {
+          tasks = [...defaultTasks];
+        }
+      } else {
+        tasks = [...defaultTasks];
+      }
+
+      const taskListEl = document.getElementById('taskList');
+      const newTaskInput = document.getElementById('newTaskInput');
+      const addBtn = document.getElementById('addTaskBtn');
+      const progressBar = document.getElementById('progressBar');
+      const progressPercent = document.getElementById('progressPercent');
+
+      function saveTasks() {
+        localStorage.setItem('careerTodoTasks_v2', JSON.stringify(tasks));
+      }
+
+      function updateProgress() {
+        const total = tasks.length;
+        const completed = tasks.filter(t => t.done).length;
+        const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+        progressBar.style.width = percent + '%';
+        progressPercent.textContent = percent + '%';
+      }
+
+      function escapeHtml(text) {
+        const map = {
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+      }
+
+      function renderTasks() {
+        taskListEl.innerHTML = '';
+        tasks.forEach((task, index) => {
+          const li = document.createElement('li');
+          li.className = 'task-item flex items-center gap-3 bg-white/80 backdrop-blur-sm border border-emerald-100 rounded-xl px-4 py-3 shadow-sm hover:shadow transition-all';
+          li.style.animationDelay = (index * 0.03) + 's';
+          li.innerHTML = `
+            <input type="checkbox" id="task-${task.id}" ${task.done ? 'checked' : ''} class="w-5 h-5 text-emerald-600 rounded accent-emerald-700 cursor-pointer">
+            <label for="task-${task.id}" class="flex-1 text-gray-800 font-medium cursor-pointer select-none ${task.done ? 'line-through text-gray-400' : ''}">${escapeHtml(task.text)}</label>
+            <button class="text-gray-400 hover:text-red-500 transition p-1 delete-btn" data-id="${task.id}" title="Xóa">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+            </button>
+          `;
+          // checkbox event
+          const checkbox = li.querySelector('input[type="checkbox"]');
+          checkbox.addEventListener('change', function(e) {
+            task.done = e.target.checked;
+            saveTasks();
+            renderTasks();
+            updateProgress();
+            showToast(task.done ? '✅ Đã hoàn thành!' : '🔄 Đã bỏ đánh dấu');
+          });
+          // delete button
+          const delBtn = li.querySelector('.delete-btn');
+          delBtn.addEventListener('click', function() {
+            tasks = tasks.filter(t => t.id !== task.id);
+            saveTasks();
+            renderTasks();
+            updateProgress();
+            showToast('🗑️ Đã xóa công việc');
+          });
+          taskListEl.appendChild(li);
+        });
+        updateProgress();
+      }
+
+      function addTask(text) {
+        const trimmed = text.trim();
+        if (trimmed === '') {
+          showToast('⚠️ Vui lòng nhập nội dung công việc');
+          return;
+        }
+        tasks.push({ id: crypto.randomUUID(), text: trimmed, done: false });
+        saveTasks();
+        renderTasks();
+        updateProgress();
+        newTaskInput.value = '';
+        showToast('📌 Đã thêm công việc mới');
+      }
+
+      addBtn.addEventListener('click', () => {
+        addTask(newTaskInput.value);
+      });
+
+      newTaskInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addTask(newTaskInput.value);
+        }
+      });
+
+      // Initial render
+      renderTasks();
+
+      // Mở sẵn giai đoạn 0 để minh họa (tùy chọn)
+      // const firstBtn = document.querySelector('.accordion-btn');
+      // if (firstBtn) firstBtn.click();
+    })();
+  </script>
+</body>
+</html>
+```
